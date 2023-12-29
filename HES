@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Number Game</title>
+    <style>
+        body {
+            font-family: 'Helvetica', sans-serif;
+            background-color: #E1EFFF;
+            text-align: center;
+            margin: 20px;
+            position: relative;
+        }
+        #random-number {
+            font-size: 36px;
+            margin: 20px;
+            color: #4CAF50; /* Green color for the special label */
+        }
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+        input {
+            margin: 5px 0;
+        }
+        #result {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        #counts {
+            margin: 10px 0;
+        }
+        #hessa-watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 40px;
+            font-style: italic;
+            font-weight: bold;
+            color: #CCCCCC;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="hessa-watermark">HESSA</div>
+
+    <h1>Random Number Game</h1>
+
+    <div id="random-number"></div>
+
+    <label for="seconds">Enter seconds:</label>
+    <input type="number" id="seconds" value="1" min="1">
+
+    <label for="user-input">Enter 6-digit number:</label>
+    <input type="text" id="user-input" onkeypress="checkEnterKey(event)">
+
+    <div id="result"></div>
+
+    <div id="counts">
+        <p>Correct: <span id="correct-count">0</span></p>
+        <p>Wrong: <span id="wrong-count">0</span></p>
+    </div>
+
+    <button onclick="startGame()">Play</button>
+    <button onclick="checkResult()">Check</button>
+    <button onclick="resetAll()">Reset All</button>
+
+    <p id="past-number-label">Past Flashing Number: </p>
+
+    <script>
+        let random_number;
+        let past_flashing_number;
+        let correct_count = 0;
+        let wrong_count = 0;
+
+        function startGame() {
+            clearDisplay();
+            generateRandomNumber();
+        }
+
+        function generateRandomNumber() {
+            random_number = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+            document.getElementById('random-number').textContent = random_number;
+            past_flashing_number = random_number;
+            setTimeout(clearDisplay, parseInt(document.getElementById('seconds').value) * 1000);
+        }
+
+        function clearDisplay() {
+            document.getElementById('random-number').textContent = '';
+            document.getElementById('user-input').value = '';
+            document.getElementById('result').textContent = '';
+        }
+
+        function checkResult() {
+            const user_input = document.getElementById('user-input').value;
+            if (user_input === random_number) {
+                document.getElementById('result').textContent = 'Correct!';
+                correct_count++;
+            } else {
+                document.getElementById('result').textContent = 'Wrong!';
+                wrong_count++;
+            }
+            updateCountLabels();
+            document.getElementById('past-number-label').textContent = 'Past Flashing Number: ' + past_flashing_number;
+        }
+
+        function updateCountLabels() {
+            document.getElementById('correct-count').textContent = correct_count;
+            document.getElementById('wrong-count').textContent = wrong_count;
+        }
+
+        function resetAll() {
+            random_number = null;
+            past_flashing_number = null;
+            correct_count = 0;
+            wrong_count = 0;
+            updateCountLabels();
+            clearDisplay();
+            document.getElementById('past-number-label').textContent = 'Past Flashing Number: ';
+        }
+
+        function checkEnterKey(event) {
+            if (event.key === 'Enter') {
+                checkResult();
+            }
+        }
+    </script>
+</body>
+</html>
+      
